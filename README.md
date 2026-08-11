@@ -1,8 +1,8 @@
 # Awesome Low-GPU ⚡
 
-[![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
-[![License: CC0](https://img.shields.io/badge/License-CC0-green.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+![Awesome](https://awesome.re/badge.svg)
+![License: CC0](https://img.shields.io/badge/License-CC0-green.svg)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
 A curated list of open-source codebases and practical methodologies that reduce memory requirements or make machine-learning inference/training possible on consumer GPUs, integrated GPUs, CPUs, Apple Silicon, edge devices, or heterogeneous systems.
 
