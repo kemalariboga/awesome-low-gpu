@@ -39,8 +39,6 @@ General-purpose serving engines are included only when they expose relevant memo
 - [Rust-Native Frameworks and Runtimes](#rust-native-frameworks-and-runtimes)
 - [Compressed Model Formats](#compressed-model-formats)
 - [Benchmarking and Capacity Planning](#benchmarking-and-capacity-planning)
-- [Low-GPU Methodologies](#low-gpu-methodologies)
-- [Memory Estimation](#memory-estimation)
 - [Research, Experimental, and Legacy Projects](#research-experimental-and-legacy-projects)
 - [Contributing](#contributing)
 
@@ -104,10 +102,6 @@ These projects are primarily optimized for throughput or production serving rath
 
 ## Quantization and Compression
 
-### General
-
-- **[ZipServ](https://github.com/HPMLL/ZipServ_ASPLOS26)** - Research prototype for lossless compression of LLM weights during serving. Its published speed/size figures are benchmark maxima from the prototype, not general guarantees.
-
 ### General LLM quantization
 
 - **[GPTQModel](https://github.com/ModelCloud/GPTQModel)** - Actively developed GPTQ-centered quantization and inference toolkit with support for multiple quantization schemes and hardware-accelerated backends. It is the recommended modern replacement for archived AutoGPTQ.
@@ -138,9 +132,11 @@ These projects are primarily optimized for throughput or production serving rath
 
 ## Offloading, Streaming, and Model Swapping
 
-This category is central to the repository: these tools deliberately trade PCIe/CPU/disk bandwidth and latency for lower accelerator-memory requirements.
+This category is central to the repository: these tools deliberately trade PCIe, CPU, unified-memory, disk/NVMe bandwidth, and latency for lower accelerator-memory requirements. Techniques include layer streaming, expert streaming, CPU/GPU partitioning, model swapping, and memory-aware execution.
 
 - **[AirLLM](https://github.com/lyogavin/airllm)** - Streams model layers or MoE experts instead of keeping the full model on the GPU. The project reports extremely low VRAM footprints for very large models; substantial disk/system-memory capacity and much lower throughput than fully resident inference should be expected.
+
+- **[TurboFieldfare](https://github.com/drumih/turbo-fieldfare)** - Experimental Swift + Metal inference runtime for Gemma 4 26B-A4B on Apple Silicon. Keeps the shared model core and KV cache in memory while streaming routed MoE experts from SSD, enabling the 26B model to run with roughly 2 GB of model/KV memory on an 8 GB Apple Silicon Mac. The project uses 4-bit weights and an SSD-backed expert cache; it is currently model-specific and requires macOS 26, Metal 4, and Swift 6.2+.
 
 - **[KTransformers](https://github.com/kvcache-ai/ktransformers)** - CPU/GPU heterogeneous inference and fine-tuning framework. Particularly relevant to large MoE models because selected operators/experts can run on CPU while other work remains on GPU.
 
@@ -170,7 +166,7 @@ At long context lengths, KV cache can become a major fraction of runtime memory 
 
 - **[PagedAttention](https://arxiv.org/abs/2309.06180)** - Used by systems such as vLLM to manage KV cache in paged blocks, reducing allocation waste/fragmentation and improving batching. It is a memory-utilization technique, not a guarantee that total KV-cache demand disappears.
 
-- **[TurboQuant](https://github.com/0xsero/turboquant)** - Google's new near-optimal KV cache quantization for LLM inference (3-bit keys, 2-bit values) with Triton kernels + vLLM integration
+- **[TurboQuant](https://github.com/0xsero/turboquant)** - Google's new near-optimal KV cache quantization for LLM inference (3-bit keys, 2-bit values) with Triton kernels + vLLM integration.
 
 - **KV-cache quantization** - Supported in several modern runtimes (including ExLlama-family and other engines) to trade some numerical precision for longer context or more concurrent sequences.
 
@@ -186,7 +182,7 @@ At long context lengths, KV cache can become a major fraction of runtime memory 
 
 - **[bitsandbytes](https://github.com/bitsandbytes-foundation/bitsandbytes)** - Core 4-bit/8-bit building blocks used by many QLoRA and low-memory optimizer workflows.
 
-- **[Unsloth](https://github.com/unslothai/unsloth)** - Fine-tuning stack focused on reducing training memory and increasing speed for LoRA/QLoRA/full-fine-tuning workflows.1
+- **[Unsloth](https://github.com/unslothai/unsloth)** - Fine-tuning stack focused on reducing training memory and increasing speed for LoRA/QLoRA/full-fine-tuning workflows.
 
 - **[Liger Kernel](https://github.com/linkedin/Liger-Kernel)** - Triton kernels for LLM training/post-training that fuse operations to reduce memory traffic and peak memory while improving throughput.
 
@@ -270,6 +266,8 @@ Pooling devices is another way to overcome per-device memory limits, but network
 
 - **llama.cpp Metal backend** - Uses Metal acceleration and can split work between CPU and GPU/unified memory on Apple Silicon.
 
+- **[TurboFieldfare](https://github.com/drumih/turbo-fieldfare)** - Model-specific Swift + Metal runtime for Gemma 4 26B-A4B on Apple Silicon. Uses 4-bit weights and SSD-backed MoE expert streaming to minimize resident memory; the project reports roughly 2 GB of resident model/KV memory on an 8 GB M2 MacBook Air. Requires macOS 26 and Metal 4.
+
 ### AMD / Vulkan / cross-vendor GPU paths
 
 - **llama.cpp HIP/Vulkan backends** - Provide AMD and cross-vendor accelerator paths; actual model support/performance depends on GPU and driver stack.
@@ -335,6 +333,8 @@ These projects are useful historically or experimentally, but should not be pres
 - **[AdaLLM / NVFP4-on-4090-vLLM](https://github.com/BenChaliah/NVFP4-on-4090-vLLM)** - Experimental NVFP4/FP8 inference runtime targeting Ada Lovelace hardware.
 
 - **[kimi-k3-in-c](https://github.com/FareedKhan-dev/kimi-k3-in-c)** - Experimental community C implementation for Kimi K3. 
+
+- **[ZipServ](https://github.com/HPMLL/ZipServ_ASPLOS26)** - Research prototype for lossless compression of LLM weights during serving. Its published speed/size figures are benchmark maxima from the prototype, not general guarantees.
 
 ### Archived / superseded
 
