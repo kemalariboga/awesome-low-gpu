@@ -136,6 +136,14 @@ This category is central to the repository: these tools deliberately trade PCIe,
 
 - **[AirLLM](https://github.com/lyogavin/airllm)** - Streams model layers or MoE experts instead of keeping the full model on the GPU. The project reports extremely low VRAM footprints for very large models; substantial disk/system-memory capacity and much lower throughput than fully resident inference should be expected.
 
+- **[kimi-k3-in-c](https://github.com/FareedKhan-dev/kimi-k3-in-c)** - Portable C99 inference engine for the 2.78-trillion-parameter Kimi K3. Streams the dense trunk from disk and keeps routed experts off-RAM, with a reported 8.24 GB peak RSS on an 8 GB machine and no GPU. Requires roughly 1.56 TB for the original checkpoint plus 109 GB for the packed streaming trunk.
+
+- **[BigMoeOnEdge](https://github.com/Helldez/BigMoeOnEdge)** - MoE inference engine built on llama.cpp that streams only the experts selected for each token directly from flash storage instead of keeping the full model resident. The project reports DeepSeek V4 Flash 284B running CPU-only on a 12 GB phone, with other models above the device's RAM also supported.
+
+- **[WARP](https://github.com/sqliteai/warp)** - Dependency-free C inference engine that keeps a model's shared trunk in RAM while streaming selected MoE experts directly from disk and using remaining RAM as a bounded expert cache. Targets extremely large models such as Kimi K3; the project reports running the full 2.78T model with about 29 GB minimum RAM and roughly 0.45–0.62 tok/s on a 64 GB MacBook Pro.
+
+- **[Pulsar](https://github.com/giannisanni/pulsar)** - Rust + CUDA SSD-streaming inference engine for large MoE models on consumer GPUs. Automatically measures PCIe bandwidth and places attention and frequently used experts according to available GPU memory, while streaming the remaining weights from NVMe. Benchmarks include 295B Hy3 at 6 tok/s and 744B GLM-5.2 at 2.7 tok/s on two 16 GB GPUs.
+
 - **[TurboFieldfare](https://github.com/drumih/turbo-fieldfare)** - Experimental Swift + Metal inference runtime for Gemma 4 26B-A4B on Apple Silicon. Keeps the shared model core and KV cache in memory while streaming routed MoE experts from SSD, enabling the 26B model to run with roughly 2 GB of model/KV memory on an 8 GB Apple Silicon Mac. The project uses 4-bit weights and an SSD-backed expert cache; it is currently model-specific and requires macOS 26, Metal 4, and Swift 6.2+.
 
 - **[KTransformers](https://github.com/kvcache-ai/ktransformers)** - CPU/GPU heterogeneous inference and fine-tuning framework. Particularly relevant to large MoE models because selected operators/experts can run on CPU while other work remains on GPU.
@@ -331,8 +339,6 @@ These projects are useful historically or experimentally, but should not be pres
 - **[PowerInfer](https://github.com/Tiiny-AI/PowerInfer)** - Research system exploiting activation sparsity by placing "hot" neurons on GPU and "cold" neurons on CPU. Headline speedups are model/hardware-specific and depend on supported sparse-activation architectures; do not generalize the maximum figure to arbitrary LLMs.
 
 - **[AdaLLM / NVFP4-on-4090-vLLM](https://github.com/BenChaliah/NVFP4-on-4090-vLLM)** - Experimental NVFP4/FP8 inference runtime targeting Ada Lovelace hardware.
-
-- **[kimi-k3-in-c](https://github.com/FareedKhan-dev/kimi-k3-in-c)** - Experimental community C implementation for Kimi K3. 
 
 - **[ZipServ](https://github.com/HPMLL/ZipServ_ASPLOS26)** - Research prototype for lossless compression of LLM weights during serving. Its published speed/size figures are benchmark maxima from the prototype, not general guarantees.
 
