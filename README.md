@@ -144,6 +144,8 @@ This category is central to the repository: these tools deliberately trade PCIe,
 
 - **[Pulsar](https://github.com/giannisanni/pulsar)** - Rust + CUDA SSD-streaming inference engine for large MoE models on consumer GPUs. Automatically measures PCIe bandwidth and places attention and frequently used experts according to available GPU memory, while streaming the remaining weights from NVMe. Benchmarks include 295B Hy3 at 6 tok/s and 744B GLM-5.2 at 2.7 tok/s on two 16 GB GPUs.
 
+* [Colibri](https://github.com/JustVugg/colibri) - Pure-C inference engine for large Mixture-of-Experts models that uses VRAM, RAM, and NVMe as a unified memory hierarchy. Streams routed experts from storage so the entire model does not need to reside in GPU memory, with CPU, CUDA, Metal, and Vulkan backends.
+
 - **[TurboFieldfare](https://github.com/drumih/turbo-fieldfare)** - Experimental Swift + Metal inference runtime for Gemma 4 26B-A4B on Apple Silicon. Keeps the shared model core and KV cache in memory while streaming routed MoE experts from SSD, enabling the 26B model to run with roughly 2 GB of model/KV memory on an 8 GB Apple Silicon Mac. The project uses 4-bit weights and an SSD-backed expert cache; it is currently model-specific and requires macOS 26, Metal 4, and Swift 6.2+.
 
 - **[KTransformers](https://github.com/kvcache-ai/ktransformers)** - CPU/GPU heterogeneous inference and fine-tuning framework. Particularly relevant to large MoE models because selected operators/experts can run on CPU while other work remains on GPU.
